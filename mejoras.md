@@ -22,17 +22,17 @@ Sin estos puntos, otras personas no podrían usarla bien.
 
 ### 1.2 Los bloques iniciales son personales
 
-- [ ] **A medias**: el SQL está actualizado en el repositorio; falta ejecutarlo en Supabase.
+- [x] **Hecho**: ejecutado en Supabase.
 
 **Problema:** todo usuario nuevo empezaba con Poker, Programación, Huerta y Tareas varias, que son los bloques de una persona concreta.
 
 **Solución:** el disparador `create_initial_blocks` crea ahora tres bloques genéricos: Casa, Trabajo y Estudios.
 
-**Falta:** ejecutar en el SQL Editor de Supabase el bloque `create or replace function` de `supabase/schema.sql`. No afecta a los usuarios ya registrados.
+**Cómo:** se ejecutó en el SQL Editor de Supabase el bloque `create or replace function` de `supabase/schema.sql`. No afecta a los usuarios ya registrados.
 
 ### 1.3 Los errores de acceso salen en inglés
 
-- [x] **Hecho** en `dev`; falta probarlo y pasarlo a `main`.
+- [x] **Hecho** y publicado.
 
 **Problema:** el formulario mostraba los mensajes tal como los devuelve Supabase ("Invalid login credentials", "User already registered").
 
