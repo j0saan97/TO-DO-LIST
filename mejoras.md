@@ -64,9 +64,9 @@ Cosas que funcionan en el PC y hay que confirmar en un móvil real.
 No bloquean nada, pero mejoran la experiencia.
 
 - [ ] **Respuesta inmediata al marcar una tarea.** Hoy la casilla cambia cuando Supabase confirma, y con mala cobertura se nota el retraso. Cambiarla al instante y deshacer si falla.
-- [x] **Renombrar bloques.** Hecho en `dev`: **Opciones → Renombrar** en cada bloque. Falta probarlo y pasarlo a `main`.
+- [x] **Renombrar bloques.** Hecho: **Opciones → Renombrar** en cada bloque.
 - [ ] **Reordenar bloques.** Hoy aparecen en el orden en que se crearon.
-- [x] **Ocultar las tareas completadas.** Hecho en `dev`: casilla **Ocultar completadas** encima del tablero; la elección se recuerda en cada dispositivo. Falta probarlo y pasarlo a `main`.
+- [x] **Ocultar las tareas completadas.** Hecho: casilla **Ocultar completadas** encima del tablero; la elección se recuerda en cada dispositivo.
 - [ ] **Aviso de versión nueva.** La app se actualiza sola, pero a veces hay que cerrarla y abrirla para ver los cambios.
 - [ ] **Pantalla de inicio más cuidada** para quien abre la app por primera vez.
 
