@@ -52,12 +52,12 @@ Sin estos puntos, otras personas no podrían usarla bien.
 
 Cosas que funcionan en el PC y hay que confirmar en un móvil real.
 
-- [ ] **Selector de color de los bloques.** Si no se abre o resulta incómodo, sustituirlo por una paleta de colores fijos.
-- [ ] **Confirmación al borrar un bloque con tareas.**
-- [ ] **El menú Opciones se cierra al tocar fuera.**
-- [ ] **El teclado no tapa el campo en el que se escribe.**
-- [ ] **Sin conexión**: la app abre y muestra un aviso, no una pantalla en blanco.
-- [ ] **Tamaño de botones y textos** cómodo con el dedo.
+- [x] **Selector de color de los bloques.** Si no se abre o resulta incómodo, sustituirlo por una paleta de colores fijos.
+- [x] **Confirmación al borrar un bloque con tareas.**
+- [x] **El menú Opciones se cierra al tocar fuera.**
+- [x] **El teclado no tapa el campo en el que se escribe.**
+- [ ] **Sin conexión**: en modo avión la app no abre. Falta aclarar qué se ve exactamente (aviso de error o pantalla en blanco) para decidir si hay algo que arreglar.
+- [x] **Tamaño de botones y textos** cómodo con el dedo.
 
 ## 3. Mejoras de uso
 
