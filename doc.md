@@ -9,7 +9,7 @@ Lista de tareas organizada por bloques, que se usa desde el navegador o instalad
 ## Qué hace
 
 - Registro e inicio de sesión con email y contraseña.
-- Bloques: crear, borrar y cambiar de color. Cada usuario nuevo empieza con cuatro.
+- Bloques: crear, borrar y cambiar de color. Cada usuario nuevo empieza con tres.
 - Tareas: crear, editar, mover de bloque, completar y borrar. Dentro de cada bloque se ordenan por importancia.
 - Todo se guarda en una base de datos en la nube, así que los datos son los mismos en el PC y en el móvil.
 - Se instala en el móvil desde el navegador, sin tienda de aplicaciones.
@@ -146,7 +146,7 @@ Dos tablas, definidas en [supabase/schema.sql](supabase/schema.sql):
 
 - Al borrar un bloque se borran sus tareas (`on delete cascade`).
 - Al borrar un usuario se borran sus bloques y tareas.
-- Un disparador crea cuatro bloques iniciales cada vez que se registra un usuario: Poker, Programación, Huerta y Tareas varias.
+- Un disparador crea tres bloques iniciales cada vez que se registra un usuario: Casa, Trabajo y Estudios.
 
 ### 4. Autenticación y seguridad
 

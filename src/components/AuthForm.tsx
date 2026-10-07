@@ -3,6 +3,25 @@ import { supabase } from '../lib/supabase'
 
 type Mode = 'signIn' | 'signUp'
 
+// Mensajes en español para los códigos de error de Supabase más habituales
+const ERROR_MESSAGES: Record<string, string> = {
+  invalid_credentials: 'Email o contraseña incorrectos.',
+  email_not_confirmed: 'Confirma tu email antes de entrar. Revisa tu correo.',
+  user_already_exists: 'Ya existe una cuenta con ese email.',
+  email_exists: 'Ya existe una cuenta con ese email.',
+  weak_password: 'La contraseña es demasiado débil. Usa al menos 6 caracteres.',
+  email_address_invalid: 'El email no es válido.',
+  validation_failed: 'Revisa el email y la contraseña.',
+  signup_disabled: 'El registro está desactivado.',
+  over_request_rate_limit: 'Demasiados intentos. Espera un momento y vuelve a probar.',
+  over_email_send_rate_limit:
+    'Se han enviado demasiados correos. Espera un rato y vuelve a probar.',
+}
+
+const getErrorMessage = (code?: string) =>
+  (code && ERROR_MESSAGES[code]) ||
+  'No se pudo completar la operación. Revisa tu conexión y vuelve a probar.'
+
 function AuthForm() {
   const [mode, setMode] = useState<Mode>('signIn')
   const [email, setEmail] = useState('')
@@ -25,7 +44,7 @@ function AuthForm() {
 
     setIsSubmitting(false)
     if (error) {
-      setError(error.message)
+      setError(getErrorMessage(error.code))
       return
     }
     // Con la confirmación por email activada, el registro no abre sesión todavía

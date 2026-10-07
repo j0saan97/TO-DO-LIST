@@ -22,23 +22,21 @@ Sin estos puntos, otras personas no podrían usarla bien.
 
 ### 1.2 Los bloques iniciales son personales
 
-- [ ] **Pendiente**
+- [ ] **A medias**: el SQL está actualizado en el repositorio; falta ejecutarlo en Supabase.
 
-**Problema:** todo usuario nuevo empieza con Poker, Programación, Huerta y Tareas varias, que son los bloques de una persona concreta.
+**Problema:** todo usuario nuevo empezaba con Poker, Programación, Huerta y Tareas varias, que son los bloques de una persona concreta.
 
-**Solución:** cambiar el disparador `create_initial_blocks` para que cree bloques genéricos (por ejemplo Personal, Trabajo y Casa) o uno solo.
+**Solución:** el disparador `create_initial_blocks` crea ahora tres bloques genéricos: Casa, Trabajo y Estudios.
 
-**Cómo:** modificar la función en `supabase/schema.sql` y ejecutar el cambio en el SQL Editor de Supabase. No afecta a los usuarios ya registrados.
-
-**Por decidir:** qué bloques iniciales poner.
+**Falta:** ejecutar en el SQL Editor de Supabase el bloque `create or replace function` de `supabase/schema.sql`. No afecta a los usuarios ya registrados.
 
 ### 1.3 Los errores de acceso salen en inglés
 
-- [ ] **Pendiente**
+- [x] **Hecho** en `dev`; falta probarlo y pasarlo a `main`.
 
-**Problema:** el formulario muestra los mensajes tal como los devuelve Supabase ("Invalid login credentials", "User already registered").
+**Problema:** el formulario mostraba los mensajes tal como los devuelve Supabase ("Invalid login credentials", "User already registered").
 
-**Solución:** traducir en `src/components/AuthForm.tsx` los errores más habituales y mostrar un mensaje genérico en español para el resto.
+**Solución:** `src/components/AuthForm.tsx` traduce los errores más habituales y muestra un mensaje genérico en español para el resto.
 
 ### 1.4 No se puede recuperar la contraseña
 

@@ -43,7 +43,7 @@ create policy "Cada usuario gestiona sus tareas"
 
 -- Bloques iniciales para cada usuario nuevo
 
-create function public.create_initial_blocks()
+create or replace function public.create_initial_blocks()
 returns trigger
 language plpgsql
 security definer
@@ -51,10 +51,9 @@ set search_path = ''
 as $$
 begin
   insert into public.blocks (user_id, name, class_name) values
-    (new.id, 'Poker', 'block-poker'),
-    (new.id, 'Programación', 'block-programacion'),
-    (new.id, 'Huerta', 'block-poker'),
-    (new.id, 'Tareas varias', 'block-tareas-varias');
+    (new.id, 'Casa', 'block-poker'),
+    (new.id, 'Trabajo', 'block-programacion'),
+    (new.id, 'Estudios', 'block-tareas-varias');
   return new;
 end;
 $$;

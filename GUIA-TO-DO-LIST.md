@@ -121,7 +121,7 @@ create policy "Cada usuario gestiona sus tareas"
 
 ### 1.5 Bloques iniciales para cada usuario nuevo
 
-Hoy la app arranca con cuatro bloques (`INITIAL_BLOCKS`). Para conservar eso, un disparador los crea cuando alguien se registra:
+Para que un usuario nuevo no empiece con el tablero vacío, un disparador le crea tres bloques al registrarse:
 
 ```sql
 create function public.create_initial_blocks()
@@ -132,10 +132,9 @@ set search_path = ''
 as $$
 begin
   insert into public.blocks (user_id, name, class_name) values
-    (new.id, 'Poker', 'block-poker'),
-    (new.id, 'Programación', 'block-programacion'),
-    (new.id, 'Huerta', 'block-poker'),
-    (new.id, 'Tareas varias', 'block-tareas-varias');
+    (new.id, 'Casa', 'block-poker'),
+    (new.id, 'Trabajo', 'block-programacion'),
+    (new.id, 'Estudios', 'block-tareas-varias');
   return new;
 end;
 $$;
@@ -148,7 +147,7 @@ create trigger on_auth_user_created
 ### 1.6 Comprobar
 
 - **Table Editor**: aparecen `blocks` y `tasks`, ambas con la etiqueta de RLS activado.
-- **Authentication → Users → Add user**: crear un usuario de prueba y verificar que en `blocks` aparecen sus cuatro bloques.
+- **Authentication → Users → Add user**: crear un usuario de prueba y verificar que en `blocks` aparecen sus tres bloques.
 
 ### 1.7 Guardar el SQL en el repositorio
 
