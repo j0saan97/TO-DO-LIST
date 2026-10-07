@@ -63,7 +63,7 @@ Cosas que funcionan en el PC y hay que confirmar en un móvil real.
 
 No bloquean nada, pero mejoran la experiencia.
 
-- [x] **Respuesta inmediata al marcar una tarea.** Hecho en `dev`: la casilla cambia al instante y se deshace, con un aviso, si no se pudo guardar. Falta probarlo y pasarlo a `main`.
+- [x] **Respuesta inmediata al marcar una tarea.** Hecho: la casilla cambia al instante y se deshace, con un aviso, si no se pudo guardar.
 - [x] **Renombrar bloques.** Hecho: **Opciones → Renombrar** en cada bloque.
 - [ ] **Reordenar bloques.** Hoy aparecen en el orden en que se crearon.
 - [x] **Ocultar las tareas completadas.** Hecho: casilla **Ocultar completadas** encima del tablero; la elección se recuerda en cada dispositivo.
