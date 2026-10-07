@@ -17,7 +17,7 @@ Objetivo final: usar esta app en un móvil Android como una app más (icono en l
 | 4 | Lectura y escritura real de bloques y tareas | Hecho |
 | 5 | Ajustes para pantalla de móvil | Hecho |
 | 6 | La app convertida en PWA instalable | Hecho |
-| 7 | La app publicada en internet | Pendiente |
+| 7 | La app publicada en internet | Hecho |
 | 8 | La app instalada y probada en el móvil | Pendiente |
 
 **Decisiones técnicas:**
