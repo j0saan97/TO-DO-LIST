@@ -10,9 +10,9 @@ Sin estos puntos, otras personas no podrían usarla bien.
 
 ### 1.1 Los correos de confirmación no llegan a otros usuarios
 
-- [ ] **Pendiente**
+- [x] **Hecho**: la confirmación está desactivada en Supabase.
 
-**Problema:** el proyecto de Supabase exige confirmar el email al registrarse. Esos correos los envía el servicio gratuito de Supabase, pensado solo para pruebas: envía muy pocos por hora y, según su documentación, solo a miembros de la organización. Un usuario nuevo se quedaría esperando un correo que no llega.
+**Problema:** el proyecto de Supabase exigía confirmar el email al registrarse. Esos correos los envía el servicio gratuito de Supabase, pensado solo para pruebas: envía muy pocos por hora y, según su documentación, solo a miembros de la organización. Un usuario nuevo se quedaría esperando un correo que no llega.
 
 **Solución elegida para un grupo de amigos:** desactivar la confirmación.
 
