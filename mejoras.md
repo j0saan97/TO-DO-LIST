@@ -56,14 +56,14 @@ Cosas que funcionan en el PC y hay que confirmar en un móvil real.
 - [x] **Confirmación al borrar un bloque con tareas.**
 - [x] **El menú Opciones se cierra al tocar fuera.**
 - [x] **El teclado no tapa el campo en el que se escribe.**
-- [ ] **Sin conexión**: en modo avión la app no abre. Falta aclarar qué se ve exactamente (aviso de error o pantalla en blanco) para decidir si hay algo que arreglar.
+- [x] **Sin conexión**: en modo avión la app no abre. Se acepta así; no se va a trabajar en ello.
 - [x] **Tamaño de botones y textos** cómodo con el dedo.
 
 ## 3. Mejoras de uso
 
 No bloquean nada, pero mejoran la experiencia.
 
-- [ ] **Respuesta inmediata al marcar una tarea.** Hoy la casilla cambia cuando Supabase confirma, y con mala cobertura se nota el retraso. Cambiarla al instante y deshacer si falla.
+- [x] **Respuesta inmediata al marcar una tarea.** Hecho en `dev`: la casilla cambia al instante y se deshace, con un aviso, si no se pudo guardar. Falta probarlo y pasarlo a `main`.
 - [x] **Renombrar bloques.** Hecho: **Opciones → Renombrar** en cada bloque.
 - [ ] **Reordenar bloques.** Hoy aparecen en el orden en que se crearon.
 - [x] **Ocultar las tareas completadas.** Hecho: casilla **Ocultar completadas** encima del tablero; la elección se recuerda en cada dispositivo.

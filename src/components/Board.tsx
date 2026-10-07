@@ -122,8 +122,18 @@ function Board() {
     const task = tasks.find((t) => t.id === id)
     if (!task) return
 
+    // Se marca al momento y se deshace si no se pudo guardar
+    const completed = !task.completed
+    replaceTask({ ...task, completed })
     return run(async () => {
-      replaceTask(await api.updateTask(id, { completed: !task.completed }))
+      try {
+        await api.updateTask(id, { completed })
+      } catch (e) {
+        setTasks((prev) =>
+          prev.map((t) => (t.id === id ? { ...t, completed: !completed } : t)),
+        )
+        throw e
+      }
     })
   }
 
