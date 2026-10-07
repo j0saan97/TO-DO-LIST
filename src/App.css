@@ -1,5 +1,9 @@
 #app {
-  padding: 32px 20px 48px;
+  /* Respeta la barra de estado y la de navegación del móvil */
+  padding: calc(32px + env(safe-area-inset-top))
+    calc(20px + env(safe-area-inset-right))
+    calc(48px + env(safe-area-inset-bottom))
+    calc(20px + env(safe-area-inset-left));
   text-align: left;
 }
 
@@ -56,6 +60,69 @@
     font-size: 14px;
     color: #dc2626;
   }
+}
+
+.auth-form {
+  flex-direction: column;
+  max-width: 360px;
+
+  input {
+    flex: none;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .form-error,
+  .form-notice {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .form-error {
+    color: #dc2626;
+  }
+
+  .link-button {
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 14px;
+    text-align: left;
+    text-decoration: underline;
+  }
+}
+
+.session-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+
+  button {
+    font: inherit;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-h);
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--accent-border);
+    }
+  }
+}
+
+.board-error {
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #dc2626;
 }
 
 .board {
@@ -283,6 +350,49 @@
 
     &:hover {
       border-color: var(--accent-border);
+    }
+  }
+}
+
+/* Pantallas táctiles: zonas de pulsación de al menos 44 px */
+@media (pointer: coarse) {
+  .task-form,
+  .task-item,
+  .session-bar {
+    input:not([type='checkbox']),
+    select,
+    button {
+      min-height: 44px;
+    }
+  }
+
+  .task-form .link-button {
+    min-height: 0;
+    padding: 12px 0;
+  }
+
+  .task-check {
+    min-height: 44px;
+
+    input {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+  }
+
+  .task-actions button {
+    padding: 4px 12px;
+  }
+
+  .task-block .block-options {
+    button,
+    .color-picker {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 2px 12px;
+      font-size: 14px;
     }
   }
 }

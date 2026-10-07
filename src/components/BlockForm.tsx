@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from 'react'
-import type { Block, BlockName } from '../types'
+import type { Block } from '../types'
 
 interface BlockFormProps {
   blocks: Block[]
-  onAddBlock: (name: BlockName) => void
+  onAddBlock: (name: string) => void
 }
 
 function BlockForm({ blocks, onAddBlock }: BlockFormProps) {

@@ -1,7 +1,6 @@
-export type BlockName = string
-
 export interface Block {
-  name: BlockName
+  id: string
+  name: string
   className: string
   // Color elegido por el usuario; si no hay, manda el de className
   color?: string
@@ -10,17 +9,12 @@ export interface Block {
 export interface Task {
   id: number
   text: string
-  block: BlockName
+  blockId: string
   importance: number
   completed: boolean
 }
 
-export const INITIAL_BLOCKS: Block[] = [
-  { name: 'Poker', className: 'block-poker' },
-  { name: 'Programación', className: 'block-programacion' },
-  { name: 'Huerta', className: 'block-poker' },
-  { name: 'Tareas varias', className: 'block-tareas-varias' },
-]
+export type TaskChanges = Pick<Task, 'text' | 'blockId' | 'importance'>
 
 export const EXTRA_BLOCK_CLASSES = [
   'block-extra-1',

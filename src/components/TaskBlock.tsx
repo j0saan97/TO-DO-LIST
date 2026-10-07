@@ -5,27 +5,23 @@ import {
   type CSSProperties,
   type MouseEvent,
 } from 'react'
-import type { Block, BlockName, Task } from '../types'
+import type { Block, Task, TaskChanges } from '../types'
 import TaskItem from './TaskItem'
 
-interface TaskEditChanges {
-  text: string
-  block: BlockName
-  importance: number
-}
 
 interface TaskBlockProps {
-  name: BlockName
+  id: string
+  name: string
   className: string
   blocks: Block[]
   tasks: Task[]
   color?: string
-  onChangeColor: (name: BlockName, color: string) => void
+  onChangeColor: (id: string, color: string) => void
   canDelete: boolean
-  onDeleteBlock: (name: BlockName) => void
+  onDeleteBlock: (id: string) => void
   onToggleComplete: (id: number) => void
   onDelete: (id: number) => void
-  onEdit: (id: number, changes: TaskEditChanges) => void
+  onEdit: (id: number, changes: TaskChanges) => void
 }
 
 // Texto oscuro sobre fondos claros y claro sobre fondos oscuros
@@ -45,6 +41,7 @@ const rgbToHex = (rgb: string) =>
     .join('')
 
 function TaskBlock({
+  id,
   name,
   className,
   blocks,
@@ -114,11 +111,11 @@ function TaskBlock({
                   type="color"
                   defaultValue={color ?? '#ffffff'}
                   onClick={handleColorClick}
-                  onChange={(e) => onChangeColor(name, e.target.value)}
+                  onChange={(e) => onChangeColor(id, e.target.value)}
                 />
               </label>
               {canDelete && (
-                <button type="button" onClick={() => onDeleteBlock(name)}>
+                <button type="button" onClick={() => onDeleteBlock(id)}>
                   Eliminar bloque
                 </button>
               )}

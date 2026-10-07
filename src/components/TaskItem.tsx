@@ -1,11 +1,6 @@
 import { useState } from 'react'
-import type { Block, BlockName, Task } from '../types'
+import type { Block, Task, TaskChanges } from '../types'
 
-interface TaskEditChanges {
-  text: string
-  block: BlockName
-  importance: number
-}
 
 interface TaskItemProps {
   task: Task
@@ -13,7 +8,7 @@ interface TaskItemProps {
   isTopPriority: boolean
   onToggleComplete: (id: number) => void
   onDelete: (id: number) => void
-  onEdit: (id: number, changes: TaskEditChanges) => void
+  onEdit: (id: number, changes: TaskChanges) => void
 }
 
 function TaskItem({
@@ -26,24 +21,24 @@ function TaskItem({
 }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [text, setText] = useState(task.text)
-  const [selectedBlock, setBlock] = useState<BlockName>(task.block)
+  const [selectedBlock, setBlock] = useState(task.blockId)
   // Si el bloque elegido se ha eliminado, volvemos al de la tarea
-  const block = blocks.some((b) => b.name === selectedBlock)
+  const blockId = blocks.some((b) => b.id === selectedBlock)
     ? selectedBlock
-    : task.block
+    : task.blockId
   const [importance, setImportance] = useState(task.importance)
 
   const handleSave = () => {
     const trimmed = text.trim()
     if (!trimmed) return
 
-    onEdit(task.id, { text: trimmed, block, importance })
+    onEdit(task.id, { text: trimmed, blockId, importance })
     setIsEditing(false)
   }
 
   const handleCancel = () => {
     setText(task.text)
-    setBlock(task.block)
+    setBlock(task.blockId)
     setImportance(task.importance)
     setIsEditing(false)
   }
@@ -53,11 +48,11 @@ function TaskItem({
       <li className="task-item editing">
         <input value={text} onChange={(e) => setText(e.target.value)} />
         <select
-          value={block}
+          value={blockId}
           onChange={(e) => setBlock(e.target.value)}
         >
           {blocks.map((b) => (
-            <option key={b.name} value={b.name}>
+            <option key={b.id} value={b.id}>
               {b.name}
             </option>
           ))}
