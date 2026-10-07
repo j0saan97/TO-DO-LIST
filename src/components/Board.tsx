@@ -11,12 +11,16 @@ import {
 } from '../types'
 
 const COLOR_SAVE_DELAY = 400
+const HIDE_COMPLETED_KEY = 'hideCompleted'
 
 function Board() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [blocks, setBlocks] = useState<Block[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [hideCompleted, setHideCompleted] = useState(
+    () => localStorage.getItem(HIDE_COMPLETED_KEY) === 'true',
+  )
   const colorTimer = useRef<number | undefined>(undefined)
 
   useEffect(() => {
@@ -52,6 +56,32 @@ function Board() {
     return run(async () => {
       const block = await api.addBlock(name, className)
       setBlocks((prev) => [...prev, block])
+    })
+  }
+
+  const handleRenameBlock = (id: string) => {
+    const current = blocks.find((b) => b.id === id)?.name ?? ''
+    const name = window.prompt('Nuevo nombre del bloque:', current)?.trim()
+    if (!name || name === current) return
+
+    const isDuplicate = blocks.some(
+      (b) => b.id !== id && b.name.toLowerCase() === name.toLowerCase(),
+    )
+    if (isDuplicate) {
+      setError('Ya existe un bloque con ese nombre.')
+      return
+    }
+
+    return run(async () => {
+      await api.renameBlock(id, name)
+      setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, name } : b)))
+    })
+  }
+
+  const handleToggleHideCompleted = () => {
+    setHideCompleted((prev) => {
+      localStorage.setItem(HIDE_COMPLETED_KEY, String(!prev))
+      return !prev
     })
   }
 
@@ -110,11 +140,22 @@ function Board() {
 
   if (isLoading) return <p>Cargando...</p>
 
+  const completedCount = tasks.filter((t) => t.completed).length
+  const visibleTasks = hideCompleted ? tasks.filter((t) => !t.completed) : tasks
+
   return (
     <>
       {error && <p className="form-error board-error">{error}</p>}
       {blocks.length > 0 && <TaskForm blocks={blocks} onAdd={handleAdd} />}
       <BlockForm blocks={blocks} onAddBlock={handleAddBlock} />
+      <label className="board-filter">
+        <input
+          type="checkbox"
+          checked={hideCompleted}
+          onChange={handleToggleHideCompleted}
+        />
+        Ocultar completadas ({completedCount})
+      </label>
       <div className="board">
         {blocks.map((b) => (
           <TaskBlock
@@ -123,9 +164,10 @@ function Board() {
             name={b.name}
             className={b.className}
             blocks={blocks}
-            tasks={tasks.filter((t) => t.blockId === b.id)}
+            tasks={visibleTasks.filter((t) => t.blockId === b.id)}
             color={b.color}
             onChangeColor={handleChangeBlockColor}
+            onRenameBlock={handleRenameBlock}
             canDelete={blocks.length > 1}
             onDeleteBlock={handleDeleteBlock}
             onToggleComplete={handleToggleComplete}

@@ -72,6 +72,11 @@ export async function addBlock(name: string, className: string): Promise<Block> 
   return toBlock(data)
 }
 
+export async function renameBlock(id: string, name: string): Promise<void> {
+  const { error } = await supabase.from('blocks').update({ name }).eq('id', id)
+  if (error) throw error
+}
+
 export async function updateBlockColor(id: string, color: string): Promise<void> {
   const { error } = await supabase.from('blocks').update({ color }).eq('id', id)
   if (error) throw error

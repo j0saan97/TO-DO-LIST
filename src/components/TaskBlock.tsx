@@ -17,6 +17,7 @@ interface TaskBlockProps {
   tasks: Task[]
   color?: string
   onChangeColor: (id: string, color: string) => void
+  onRenameBlock: (id: string) => void
   canDelete: boolean
   onDeleteBlock: (id: string) => void
   onToggleComplete: (id: number) => void
@@ -48,6 +49,7 @@ function TaskBlock({
   tasks,
   color,
   onChangeColor,
+  onRenameBlock,
   canDelete,
   onDeleteBlock,
   onToggleComplete,
@@ -114,6 +116,15 @@ function TaskBlock({
                   onChange={(e) => onChangeColor(id, e.target.value)}
                 />
               </label>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsOptionsOpen(false)
+                  onRenameBlock(id)
+                }}
+              >
+                Renombrar
+              </button>
               {canDelete && (
                 <button type="button" onClick={() => onDeleteBlock(id)}>
                   Eliminar bloque
