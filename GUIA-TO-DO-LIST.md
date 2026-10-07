@@ -1,12 +1,12 @@
-# Guía de construcción: To-Do List → Android
+# Guía de construcción: To-Do List en el móvil
 
-Objetivo final: tener esta app instalada en un móvil Android, con las tareas guardadas en Supabase.
+Objetivo final: usar esta app en un móvil Android como una app más (icono en la pantalla de inicio, pantalla completa), con las tareas guardadas en Supabase y sin pasar por ninguna tienda de aplicaciones.
 
 ## Punto de partida y camino elegido
 
-**Lo que ya existe** (commit `e5a908b`): una app web React 19 + TypeScript + Vite con bloques editables (crear, borrar, cambiar color) y tareas (crear, editar, completar, borrar, ordenadas por importancia). Todo el estado vive en memoria en `src/App.tsx`: al recargar la página se pierde.
+**Punto de partida** (commit `e5a908b`): una app web React 19 + TypeScript + Vite con bloques editables (crear, borrar, cambiar color) y tareas (crear, editar, completar, borrar, ordenadas por importancia). Todo el estado vivía en memoria: al recargar la página se perdía.
 
-**Lo que falta**, en este orden:
+**Fases**, en este orden:
 
 | Fase | Qué se consigue | Estado |
 |------|-----------------|--------|
@@ -16,16 +16,19 @@ Objetivo final: tener esta app instalada en un móvil Android, con las tareas gu
 | 3 | Inicio de sesión | Hecho |
 | 4 | Lectura y escritura real de bloques y tareas | Hecho |
 | 5 | Ajustes para pantalla de móvil | Hecho |
-| 6 | Entorno Android instalado en el PC | Pendiente |
-| 7 | App empaquetada con Capacitor | Pendiente |
-| 8 | App probada en un móvil real | Pendiente |
-| 9 | APK/AAB firmado y publicado | Pendiente |
+| 6 | La app convertida en PWA instalable | Hecho |
+| 7 | La app publicada en internet | Pendiente |
+| 8 | La app instalada y probada en el móvil | Pendiente |
 
 **Decisiones técnicas:**
 
-- **Capacitor** para Android. Envuelve la app web actual dentro de una app nativa, así que se reutiliza todo el código React. La alternativa (React Native) obligaría a reescribir la interfaz entera.
+- **PWA** (aplicación web progresiva) para llevarla al móvil. La app se publica en una dirección web y se instala desde Chrome con "Añadir a pantalla de inicio". Es la vía más rápida y barata: no requiere Android Studio, ni cuenta de desarrollador, ni recompilar para actualizar.
 - **Supabase** como backend: base de datos Postgres, autenticación y API lista sin escribir servidor.
-- **Inicio de sesión con email y contraseña.** Una app Android lleva la clave de Supabase dentro del APK y cualquiera puede extraerla; sin usuarios, cualquiera podría leer o borrar las tareas. Con login, cada persona solo ve las suyas.
+- **Inicio de sesión con email y contraseña.** La clave de Supabase viaja dentro del código que se descarga el navegador y cualquiera puede verla; sin usuarios, cualquiera podría leer o borrar las tareas. Con login, cada persona solo ve las suyas.
+- **Vercel** como hosting gratuito, conectado al repositorio de GitHub.
+- **Ramas de Git**: se desarrolla en `dev`; `main` guarda la última copia que funciona y es la que se publica.
+
+**Camino descartado:** empaquetar la app con Capacitor para generar un APK. Sigue siendo posible más adelante, encima de lo ya hecho, si algún día se quiere publicar en Google Play (ver el apéndice).
 
 ---
 
@@ -174,7 +177,7 @@ VITE_SUPABASE_KEY=sb_publishable_xxxxxxxx
 
 Crear también `.env.example` con los mismos nombres y valores vacíos, y ese sí subirlo.
 
-Nunca poner aquí la clave `secret` / `service_role`: se salta la seguridad por filas y acabaría dentro del APK.
+Nunca poner aquí la clave `secret` / `service_role`: se salta la seguridad por filas y quedaría a la vista de cualquiera.
 
 ### 2.3 Crear el cliente
 
@@ -217,7 +220,7 @@ Mostrar el mensaje de error que devuelva Supabase si falla.
 - Sin sesión se muestra `AuthForm`; con sesión, el tablero.
 - Añadir un botón **Cerrar sesión** (`supabase.auth.signOut()`).
 
-La sesión se guarda en el almacenamiento local, que también funciona dentro de la app Android: el usuario no tendrá que entrar cada vez.
+La sesión se guarda en el almacenamiento local, también en la app instalada en el móvil: el usuario no tendrá que entrar cada vez.
 
 ### 3.4 Comprobar
 
@@ -276,171 +279,134 @@ Detalle a cuidar: el selector de color dispara muchos eventos mientras se arrast
 3. **Botones táctiles**: al menos 44 px de alto.
 4. **Campos de texto a 16 px** como mínimo, para evitar zoom automático al enfocar.
 5. **Márgenes seguros** para la barra de estado y la de navegación: `viewport-fit=cover` en la etiqueta `viewport` de `index.html` y `env(safe-area-inset-*)` en el CSS.
-6. **Elementos que hay que verificar en el dispositivo real** (Fase 8), porque dentro de una app Android pueden comportarse distinto que en el navegador:
+6. **Elementos que hay que verificar en el móvil real** (Fase 8), porque en pantalla táctil pueden comportarse distinto que en el PC:
    - El selector de color (`<input type="color">`). Si no se abre, sustituirlo por una paleta de colores fijos.
    - El diálogo de confirmación al borrar un bloque (`window.confirm`).
    - El cierre del menú de opciones al tocar fuera.
 
 ---
 
-## Fase 6 — Instalar el entorno Android
+## Fase 6 — Convertir la app en PWA
 
-Ahora mismo en este PC hay Node 22 y npm 10, pero no hay Java ni Android SDK.
+Una PWA necesita tres cosas: un manifiesto (nombre, colores e iconos de la app), un *service worker* (guarda la app en el móvil para que abra rápido) y servirse por HTTPS. Las dos primeras las genera un plugin de Vite; la tercera la da el hosting.
 
-1. **Instalar Android Studio** desde <https://developer.android.com/studio>. Incluye el JDK y el SDK. El asistente inicial descarga varios GB.
-2. En Android Studio: **More Actions → SDK Manager** y comprobar que están instalados:
-   - Una plataforma Android reciente (pestaña *SDK Platforms*).
-   - *Android SDK Build-Tools*, *Platform-Tools* y *Command-line Tools* (pestaña *SDK Tools*).
-3. **Variables de entorno de Windows** (Configuración → Sistema → Variables de entorno):
-   - `ANDROID_HOME` = `C:\Users\Administrador\AppData\Local\Android\Sdk`
-   - `JAVA_HOME` = `C:\Program Files\Android\Android Studio\jbr`
-   - Añadir a `Path`: `%ANDROID_HOME%\platform-tools`
-4. Cerrar y abrir VS Code para que lea las variables.
-
-**Comprobar** en una terminal nueva:
+### 6.1 Instalar
 
 ```bash
-adb --version
+npm install -D vite-plugin-pwa @vite-pwa/assets-generator
 ```
 
----
+### 6.2 Icono
 
-## Fase 7 — Empaquetar con Capacitor
+- `public/favicon.svg` es el dibujo original del icono.
+- `pwa-assets.config.ts` indica cómo generar los tamaños que pide Android.
+- `npm run icons` crea los PNG en `public/`. Solo hay que repetirlo si se cambia el dibujo.
 
-### 7.1 Instalar
+### 6.3 Configurar el plugin
 
-```bash
-npm install @capacitor/core @capacitor/android
-npm install -D @capacitor/cli
-```
+En `vite.config.ts` se añade `VitePWA` con:
 
-### 7.2 Inicializar
+- `registerType: 'autoUpdate'`: cuando se publica una versión nueva, el móvil la descarga sola.
+- `manifest`: nombre (`To-Do List`), nombre corto bajo el icono (`To-Do`), `display: 'standalone'` (pantalla completa, sin barra del navegador), colores e iconos.
 
-```bash
-npx cap init "To-Do List" com.j0saan97.todolist --web-dir dist
-```
+### 6.4 Etiquetas en `index.html`
 
-El identificador (`com.j0saan97.todolist`) es único y **no se puede cambiar una vez publicada la app** en Google Play. Elegirlo con calma.
+Enlaces al icono y `theme-color`, que tiñe la barra de estado del móvil.
 
-### 7.3 Crear el proyecto Android
+### 6.5 Comprobar
 
 ```bash
 npm run build
-npx cap add android
+npm run preview
 ```
 
-Aparece la carpeta `android/`, que **sí se sube a Git** (trae su propio `.gitignore` para lo generado).
+Abrir la dirección que indique en Chrome, F12 → **Application → Manifest**: deben verse el nombre y los iconos sin errores. En **Service workers** debe aparecer uno activo.
 
-### 7.4 Ciclo de trabajo
-
-Cada vez que cambie el código web:
-
-```bash
-npm run build
-npx cap sync android
-```
-
-Conviene añadirlo como script en `package.json`:
-
-```json
-"android": "npm run build && npx cap sync android && npx cap open android"
-```
-
-Importante: las variables de `.env` se incrustan en el momento de `npm run build`. Si se cambia `.env`, hay que volver a compilar y sincronizar.
-
-### 7.5 Icono y pantalla de inicio
-
-```bash
-npm install -D @capacitor/assets
-```
-
-Colocar `assets/icon.png` (1024×1024) y `assets/splash.png` (2732×2732) y ejecutar:
-
-```bash
-npx capacitor-assets generate --android
-```
+Nota: el service worker solo se genera con `npm run build`. Con `npm run dev` la app funciona igual pero no es instalable.
 
 ---
 
-## Fase 8 — Probar en un móvil
+## Fase 7 — Publicar en internet
 
-### 8.1 Preparar el teléfono
+### 7.1 Crear el proyecto en Vercel
 
-1. **Ajustes → Acerca del teléfono**: pulsar 7 veces sobre *Número de compilación* para activar las opciones de desarrollador.
-2. **Ajustes → Opciones de desarrollador**: activar *Depuración USB*.
-3. Conectar por USB y aceptar el aviso de autorización que aparece en el teléfono.
-4. `adb devices` debe listar el dispositivo.
+1. Entrar en <https://vercel.com> y registrarse con **Continue with GitHub**.
+2. **Add New → Project** y elegir el repositorio `TO-DO-LIST`. Si no aparece, pulsar *Adjust GitHub App Permissions* y dar acceso a ese repositorio.
+3. Vercel detecta Vite y rellena solo la configuración (`npm run build`, carpeta `dist`). No tocarla.
+4. Desplegar **Environment Variables** y añadir las dos de `.env`:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_KEY`
+5. Pulsar **Deploy**. En un minuto da una dirección del tipo `https://to-do-list-xxxx.vercel.app`.
 
-Sin teléfono a mano: crear un emulador en Android Studio (**Device Manager → Create Device**).
+Sin las variables del paso 4 la app se publica pero no conecta con Supabase. Si se olvidan, añadirlas en **Settings → Environment Variables** y volver a desplegar.
 
-### 8.2 Ejecutar
+### 7.2 Avisar a Supabase de la nueva dirección
 
-```bash
-npx cap open android
-```
+En Supabase: **Authentication → URL Configuration → Site URL**, poner la dirección de Vercel. La usan los enlaces de los correos de confirmación.
 
-En Android Studio, esperar a que termine la sincronización de Gradle (la primera vez tarda varios minutos), elegir el dispositivo y pulsar **Run**.
+### 7.3 Cómo se actualiza a partir de ahora
 
-### 8.3 Lista de comprobación
+- Cada `git push` a `main` publica una versión nueva automáticamente.
+- Cada `git push` a `dev` crea una dirección de prueba aparte, sin tocar la publicada.
+- El móvil recibe la versión nueva al abrir la app (a veces hace falta cerrarla y abrirla otra vez).
 
+### 7.4 Comprobar
+
+Abrir la dirección de Vercel en el PC, entrar con la cuenta y ver las tareas.
+
+---
+
+## Fase 8 — Instalar y probar en el móvil
+
+### 8.1 Instalar
+
+1. Abrir la dirección de Vercel en **Chrome** del móvil.
+2. Menú **⋮ → Añadir a pantalla de inicio → Instalar**.
+3. El icono aparece en la pantalla de inicio y en el cajón de aplicaciones.
+
+En iPhone: abrir en Safari, botón **Compartir → Añadir a pantalla de inicio**.
+
+### 8.2 Lista de comprobación
+
+- [ ] Se abre a pantalla completa, sin barra del navegador
 - [ ] Registro e inicio de sesión
 - [ ] La sesión se mantiene al cerrar y abrir la app
 - [ ] Crear, editar, completar y borrar tareas
 - [ ] Crear y borrar bloques (con su confirmación)
 - [ ] Cambiar el color de un bloque
 - [ ] El teclado no tapa el campo que se está escribiendo
-- [ ] El botón "atrás" de Android no deja la app en un estado raro
-- [ ] Qué ocurre sin conexión: debe verse un aviso, no una pantalla en blanco
+- [ ] Los botones se pulsan bien con el dedo
+- [ ] Sin conexión: la app abre y muestra un aviso, no una pantalla en blanco
 
-### 8.4 Depurar
+### 8.3 Depurar
 
-Con el móvil conectado, abrir `chrome://inspect` en Chrome del PC: aparece la app y se pueden usar la consola y el inspector como en una web normal.
+Con el móvil conectado por USB y la *Depuración USB* activada (Ajustes → Opciones de desarrollador), abrir `chrome://inspect` en Chrome del PC: aparece la app y se pueden usar la consola y el inspector.
 
----
+### 8.4 Antes de compartirla con otras personas
 
-## Fase 9 — Generar la versión final y publicar
-
-### 9.1 Crear la clave de firma
-
-En Android Studio: **Build → Generate Signed App Bundle or APK → Create new** (keystore).
-
-- Guardar el archivo `.jks` **fuera del repositorio** y hacer copia de seguridad.
-- Guardar las contraseñas en un gestor.
-- Si se pierde, no se podrán publicar actualizaciones de la app.
-
-### 9.2 Versión
-
-En `android/app/build.gradle`:
-
-- `versionCode`: número entero que debe subir en cada publicación (1, 2, 3…).
-- `versionName`: lo que ve el usuario (`1.0.0`).
-
-### 9.3 Opción A — Instalación directa (rápida y gratis)
-
-Generar un **APK** firmado y pasarlo al móvil (cable, Drive, etc.). Al abrirlo, Android pedirá permitir la instalación desde orígenes desconocidos. Suficiente para uso personal.
-
-### 9.4 Opción B — Google Play
-
-1. Crear cuenta en <https://play.google.com/console> (pago único de 25 USD y verificación de identidad).
-2. Crear la app y completar la ficha: descripción, capturas de pantalla, icono de 512×512, gráfico de 1024×500.
-3. Completar los formularios obligatorios: **política de privacidad** (URL pública; necesaria porque la app recoge emails), seguridad de los datos, clasificación de contenido y público objetivo.
-4. Generar un **AAB** firmado (no APK) y subirlo.
-5. Las cuentas personales nuevas deben pasar una **prueba cerrada con al menos 12 testers durante 14 días** antes de poder solicitar el paso a producción.
-6. Enviar a revisión. Suele tardar entre unas horas y varios días.
-
-### 9.5 Antes de publicar
-
-- [ ] Reactivar **Confirm email** en Supabase
-- [ ] Revisar en Supabase **Authentication → URL Configuration**
+- [ ] Activar **Confirm email** en Supabase
 - [ ] Confirmar que RLS sigue activo en las dos tablas
-- [ ] Confirmar que `.env` y el `.jks` no están en Git
+- [ ] Confirmar que `.env` no está en Git
 
 ---
 
 ## Mejoras posteriores (fuera del objetivo inicial)
 
 - Recuperación de contraseña e inicio de sesión con Google.
-- Funcionamiento sin conexión con sincronización posterior.
+- Uso sin conexión con sincronización posterior (hoy la app abre sin conexión, pero no puede leer ni guardar tareas).
 - Sincronización en tiempo real entre dispositivos (Supabase Realtime).
 - Renombrar y reordenar bloques.
 - Notificaciones y recordatorios.
+- Dominio propio en lugar de la dirección `vercel.app`.
+
+---
+
+## Apéndice — Si algún día se quiere un APK o publicar en Google Play
+
+No hace falta rehacer nada: **Capacitor** envuelve esta misma app web en una app Android.
+
+1. Instalar Android Studio (incluye el JDK y el SDK; varios GB).
+2. `npm install @capacitor/core @capacitor/android` y `npm install -D @capacitor/cli`.
+3. `npx cap init "To-Do List" <identificador> --web-dir dist`. El identificador (por ejemplo `com.j0saan97.todolist`) no se puede cambiar una vez publicada la app.
+4. `npm run build`, `npx cap add android` y `npx cap open android` para compilar desde Android Studio.
+5. Para Google Play: cuenta de desarrollador (pago único de 25 USD), política de privacidad, un AAB firmado y, en cuentas personales nuevas, una prueba cerrada con 12 testers durante 14 días.
